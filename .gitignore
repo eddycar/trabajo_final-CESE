@@ -1,0 +1,36 @@
+# Ignorar directorios de compilación
+*/Debug/
+*/Release/
+
+# Ignorar archivos temporales
+*.o
+*.bin
+*.hex
+*.elf
+*.map
+*.d
+*.lst
+*.dep
+
+# Ignorar archivos de respaldo o temporales
+*~
+*.bak
+*.swp
+
+# Ignorar archivos de configuración de compiladores
+*.launch
+*.swp
+*.swo
+*.tmp
+
+# Ignorar archivos de log o temporales
+*.log
+*.tmp
+
+# Ignorar archivos de salida de STM32CubeIDE
+*.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+ignorar metadata de workspace
+.metadata/
