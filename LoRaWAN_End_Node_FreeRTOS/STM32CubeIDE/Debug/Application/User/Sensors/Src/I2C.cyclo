@@ -1,0 +1,2 @@
+../Application/User/Sensors/Src/I2C.c:11:8:user_i2c_read	5
+../Application/User/Sensors/Src/I2C.c:35:8:user_i2c_write	4

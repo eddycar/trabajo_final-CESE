@@ -1,0 +1,12 @@
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:284:13:tiny_snprintf_like	16	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:248:13:TimestampNow	32	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:90:6:SystemApp_Init	8	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:139:9:GetBatteryLevel	8	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:171:9:GetTemperatureLevel	32	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:185:6:GetUniqueId	16	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:225:6:GetDevAddr	16	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:262:6:UTIL_ADV_TRACE_PreSendHook	8	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:273:6:UTIL_ADV_TRACE_PostSendHook	8	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:307:19:HAL_InitTick	0	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:322:10:HAL_GetTick	8	static
+F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/sys_app.c:354:6:HAL_Delay	16	static
