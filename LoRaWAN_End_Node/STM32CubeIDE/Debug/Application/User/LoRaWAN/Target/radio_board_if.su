@@ -1,0 +1,8 @@
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:57:9:RBI_Init	56	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:121:9:RBI_DeInit	24	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:167:9:RBI_ConfigRFSwitch	8	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:251:9:RBI_GetTxConfig	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:274:9:RBI_GetWakeUpTime	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:297:9:RBI_IsTCXO	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:320:9:RBI_IsDCDC	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node/LoRaWAN/Target/radio_board_if.c:343:9:RBI_GetRFOMaxPowerConfig	0	static

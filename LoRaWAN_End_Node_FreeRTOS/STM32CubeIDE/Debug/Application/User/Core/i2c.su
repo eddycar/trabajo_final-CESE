@@ -1,8 +1,8 @@
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:31:6:MX_I2C1_Init	8	static
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:74:6:HAL_I2C_MspInit	104	static
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:120:6:HAL_I2C_MspDeInit	8	static
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:149:8:i2c_read	24	static
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:177:8:i2c_write	16	dynamic
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:202:6:HAL_I2C_MasterTxCpltCallback	0	static
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:206:6:HAL_I2C_MasterRxCpltCallback	0	static
-F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:210:6:HAL_I2C_ErrorCallback	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:31:6:MX_I2C1_Init	8	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:74:6:HAL_I2C_MspInit	104	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:120:6:HAL_I2C_MspDeInit	8	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:149:8:i2c_read	24	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:177:8:i2c_write	16	dynamic
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:202:6:HAL_I2C_MasterTxCpltCallback	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:206:6:HAL_I2C_MasterRxCpltCallback	0	static
+C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/Core/Src/i2c.c:210:6:HAL_I2C_ErrorCallback	0	static

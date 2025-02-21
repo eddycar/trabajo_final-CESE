@@ -16,7 +16,7 @@ S_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Application/User/Startup/%.o: ../Application/User/Startup/%.s Application/User/Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -I"F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/STM32CubeIDE/Application/User/Sensors/Inc" -I"F:/01-Especializacion en sistemas embebidos/IoT_workspace/LoRaWAN_End_Node_FreeRTOS/STM32CubeIDE/Application/User/Sensors/BME280/Inc" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -I"C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/STM32CubeIDE/Application/User/Sensors/Inc" -I"C:/Users/USUARIO/Desktop/trabajo_final-CESE/LoRaWAN_End_Node_FreeRTOS/STM32CubeIDE/Application/User/Sensors/BME280/Inc" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
 
 clean: clean-Application-2f-User-2f-Startup
 

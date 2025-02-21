@@ -70,8 +70,8 @@ all: main-build
 main-build: LoRaWAN_End_Node_FreeRTOS.elf secondary-outputs
 
 # Tool invocations
-LoRaWAN_End_Node_FreeRTOS.elf LoRaWAN_End_Node_FreeRTOS.map: $(OBJS) $(USER_OBJS) F:\01-Especializacion\ en\ sistemas\ embebidos\IoT_workspace\LoRaWAN_End_Node_FreeRTOS\STM32CubeIDE\STM32WL55JCIX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "LoRaWAN_End_Node_FreeRTOS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\01-Especializacion en sistemas embebidos\IoT_workspace\LoRaWAN_End_Node_FreeRTOS\STM32CubeIDE\STM32WL55JCIX_FLASH.ld" -Wl,-Map="LoRaWAN_End_Node_FreeRTOS.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LoRaWAN_End_Node_FreeRTOS.elf LoRaWAN_End_Node_FreeRTOS.map: $(OBJS) $(USER_OBJS) C:\Users\USUARIO\Desktop\trabajo_final-CESE\LoRaWAN_End_Node_FreeRTOS\STM32CubeIDE\STM32WL55JCIX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "LoRaWAN_End_Node_FreeRTOS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\USUARIO\Desktop\trabajo_final-CESE\LoRaWAN_End_Node_FreeRTOS\STM32CubeIDE\STM32WL55JCIX_FLASH.ld" -Wl,-Map="LoRaWAN_End_Node_FreeRTOS.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
