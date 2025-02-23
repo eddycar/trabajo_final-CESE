@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,7 @@
 #include "platform.h"
 #include "sys_app.h"
 #include "lora_app.h"
-#include "cmsis_os.h"
+#include "stm32_seq.h"
 #include "stm32_timer.h"
 #include "utilities_def.h"
 #include "app_version.h"
@@ -34,7 +34,6 @@
 #include "CayenneLpp.h"
 #include "sys_sensors.h"
 #include "flash_if.h"
-
 
 /* USER CODE BEGIN Includes */
 #include "app_bme280.h"
@@ -216,7 +215,6 @@ static void OnPingSlotPeriodicityChanged(uint8_t pingSlotPeriodicity);
 static void OnSystemReset(void);
 
 /* USER CODE BEGIN PFP */
-
 /**
   * @brief  LED Tx timer callback function
   * @param  context ptr of LED context
@@ -308,62 +306,6 @@ static UTIL_TIMER_Time_t TxPeriodicity = APP_TX_DUTYCYCLE;
   */
 static UTIL_TIMER_Object_t StopJoinTimer;
 
-osThreadId_t Thd_LoraSendProcessId;
-
-const osThreadAttr_t Thd_LoraSendProcess_attr =
-{
-  .name = CFG_APP_LORA_PROCESS_NAME,
-  .attr_bits = CFG_APP_LORA_PROCESS_ATTR_BITS,
-  .cb_mem = CFG_APP_LORA_PROCESS_CB_MEM,
-  .cb_size = CFG_APP_LORA_PROCESS_CB_SIZE,
-  .stack_mem = CFG_APP_LORA_PROCESS_STACK_MEM,
-  .priority = CFG_APP_LORA_PROCESS_PRIORITY,
-  .stack_size = CFG_APP_LORA_PROCESS_STACK_SIZE
-};
-static void Thd_LoraSendProcess(void *argument);
-
-osThreadId_t Thd_LoraStoreContextId;
-
-const osThreadAttr_t Thd_LoraStoreContext_attr =
-{
-  .name = CFG_APP_LORA_STORE_CONTEXT_NAME,
-  .attr_bits = CFG_APP_LORA_STORE_CONTEXT_ATTR_BITS,
-  .cb_mem = CFG_APP_LORA_STORE_CONTEXT_CB_MEM,
-  .cb_size = CFG_APP_LORA_STORE_CONTEXT_CB_SIZE,
-  .stack_mem = CFG_APP_LORA_STORE_CONTEXT_STACK_MEM,
-  .priority = CFG_APP_LORA_STORE_CONTEXT_PRIORITY,
-  .stack_size = CFG_APP_LORA_STORE_CONTEXT_STACK_SIZE
-};
-static void Thd_LoraStoreContext(void *argument);
-
-osThreadId_t Thd_LoraStopJoinId;
-
-const osThreadAttr_t Thd_LoraStopJoin_attr =
-{
-  .name = CFG_APP_LORA_STOP_JOIN_NAME,
-  .attr_bits = CFG_APP_LORA_STOP_JOIN_ATTR_BITS,
-  .cb_mem = CFG_APP_LORA_STOP_JOIN_CB_MEM,
-  .cb_size = CFG_APP_LORA_STOP_JOIN_CB_SIZE,
-  .stack_mem = CFG_APP_LORA_STOP_JOIN_STACK_MEM,
-  .priority = CFG_APP_LORA_STOP_JOIN_PRIORITY,
-  .stack_size = CFG_APP_LORA_STOP_JOIN_STACK_SIZE
-};
-static void Thd_LoraStopJoin(void *argument);
-
-osThreadId_t Thd_LmHandlerProcessId;
-
-const osThreadAttr_t Thd_LmHandlerProcess_attr =
-{
-  .name = CFG_LM_HANDLER_PROCESS_NAME,
-  .attr_bits = CFG_LM_HANDLER_PROCESS_ATTR_BITS,
-  .cb_mem = CFG_LM_HANDLER_PROCESS_CB_MEM,
-  .cb_size = CFG_LM_HANDLER_PROCESS_CB_SIZE,
-  .stack_mem = CFG_LM_HANDLER_PROCESS_STACK_MEM,
-  .priority = CFG_LM_HANDLER_PROCESS_PRIORITY,
-  .stack_size = CFG_LM_HANDLER_PROCESS_STACK_SIZE
-};
-static void Thd_LmHandlerProcess(void *argument);
-
 /* USER CODE BEGIN PV */
 /**
   * @brief User application buffer
@@ -409,9 +351,7 @@ void LoRaWAN_Init(void)
   /* USER CODE END LoRaWAN_Init_LV */
 
   /* USER CODE BEGIN LoRaWAN_Init_1 */
-
-  /* Get LoRaWAN APP version*/
-  APP_LOG(TS_OFF, VLEVEL_M, "APPLICATION_VERSION: V%X.%X.%X\r\n",
+	APP_LOG(TS_OFF, VLEVEL_M, "APPLICATION_VERSION: V%X.%X.%X\r\n",
           (uint8_t)(APP_VERSION_MAIN),
           (uint8_t)(APP_VERSION_SUB1),
           (uint8_t)(APP_VERSION_SUB2));
@@ -451,32 +391,15 @@ void LoRaWAN_Init(void)
   {
     Error_Handler();
   }
-
   /* USER CODE END LoRaWAN_Init_1 */
 
   UTIL_TIMER_Create(&StopJoinTimer, JOIN_TIME, UTIL_TIMER_ONESHOT, OnStopJoinTimerEvent, NULL);
 
-  Thd_LmHandlerProcessId = osThreadNew(Thd_LmHandlerProcess, NULL, &Thd_LmHandlerProcess_attr);
-  if (Thd_LmHandlerProcessId == NULL)
-  {
-    Error_Handler();
-  }
+  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LmHandlerProcess), UTIL_SEQ_RFU, LmHandlerProcess);
 
-  Thd_LoraSendProcessId = osThreadNew(Thd_LoraSendProcess, NULL, &Thd_LoraSendProcess_attr);
-  if (Thd_LoraSendProcessId == NULL)
-  {
-    Error_Handler();
-  }
-  Thd_LoraStoreContextId = osThreadNew(Thd_LoraStoreContext, NULL, &Thd_LoraStoreContext_attr);
-  if (Thd_LoraStoreContextId == NULL)
-  {
-    Error_Handler();
-  }
-  Thd_LoraStopJoinId = osThreadNew(Thd_LoraStopJoin, NULL, &Thd_LoraStopJoin_attr);
-  if (Thd_LoraStopJoinId == NULL)
-  {
-    Error_Handler();
-  }
+  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), UTIL_SEQ_RFU, SendTxData);
+  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaStoreContextEvent), UTIL_SEQ_RFU, StoreContext);
+  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaStopJoinEvent), UTIL_SEQ_RFU, StopJoin);
 
   /* Init Info table used by LmHandler*/
   LoraInfo_Init();
@@ -488,7 +411,6 @@ void LoRaWAN_Init(void)
 
   /* USER CODE BEGIN LoRaWAN_Init_2 */
   UTIL_TIMER_Start(&JoinLedTimer);
-
   /* USER CODE END LoRaWAN_Init_2 */
 
   LmHandlerJoin(ActivationType, ForceRejoin);
@@ -513,6 +435,7 @@ void LoRaWAN_Init(void)
 
 /* USER CODE BEGIN PB_Callbacks */
 
+#if 0 /* User should remove the #if 0 statement and adapt the below code according with his needs*/
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   switch (GPIO_Pin)
@@ -521,19 +444,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
       /* Note: when "EventType == TX_ON_TIMER" this GPIO is not initialized */
       if (EventType == TX_ON_EVENT)
       {
-        osThreadFlagsSet(Thd_LoraSendProcessId, 1);
+        UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
       }
       break;
     case  BUT2_Pin:
-      osThreadFlagsSet(Thd_LoraStopJoinId, 1);
+      UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaStopJoinEvent), CFG_SEQ_Prio_0);
       break;
     case  BUT3_Pin:
-      osThreadFlagsSet(Thd_LoraStoreContextId, 1);
+      UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaStoreContextEvent), CFG_SEQ_Prio_0);
       break;
     default:
       break;
   }
 }
+#endif
 
 /* USER CODE END PB_Callbacks */
 
@@ -542,73 +466,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 /* USER CODE END PrFD */
 
-static void Thd_LmHandlerProcess(void *argument)
-{
-  /* USER CODE BEGIN Thd_LmHandlerProcess_1 */
-
-  /* USER CODE END Thd_LmHandlerProcess_1 */
-  UNUSED(argument);
-  for (;;)
-  {
-    osThreadFlagsWait(1, osFlagsWaitAny, osWaitForever);
-    LmHandlerProcess(); /*what you want to do*/
-    /* USER CODE BEGIN Thd_LmHandlerProcess_2 */
-
-    /* USER CODE END Thd_LmHandlerProcess_2 */
-  }
-}
-
-static void Thd_LoraSendProcess(void *argument)
-{
-  /* USER CODE BEGIN Thd_LoraSendProcess_1 */
-
-  /* USER CODE END Thd_LoraSendProcess_1 */
-  UNUSED(argument);
-  for (;;)
-  {
-    osThreadFlagsWait(1, osFlagsWaitAny, osWaitForever);
-    SendTxData();  /*what you want to do*/
-  }
-
-  /* USER CODE BEGIN Thd_LoraSendProcess_2 */
-
-  /* USER CODE END Thd_LoraSendProcess_2 */
-}
-
-static void Thd_LoraStoreContext(void *argument)
-{
-  /* USER CODE BEGIN Thd_LoraStoreContext_1 */
-
-  /* USER CODE END Thd_LoraStoreContext_1 */
-  UNUSED(argument);
-  for (;;)
-  {
-    osThreadFlagsWait(1, osFlagsWaitAny, osWaitForever);
-    StoreContext();  /*what you want to do*/
-  }
-
-  /* USER CODE BEGIN Thd_LoraStoreContext_2 */
-
-  /* USER CODE END Thd_LoraStoreContext_2 */
-}
-
-static void Thd_LoraStopJoin(void *argument)
-{
-  /* USER CODE BEGIN Thd_LoraStopJoin_1 */
-
-  /* USER CODE END Thd_LoraStopJoin_1 */
-  UNUSED(argument);
-  for (;;)
-  {
-    osThreadFlagsWait(1, osFlagsWaitAny, osWaitForever);
-    StopJoin();  /*what you want to do*/
-  }
-
-  /* USER CODE BEGIN Thd_LoraStopJoin_2 */
-
-  /* USER CODE END Thd_LoraStopJoin_2 */
-}
-
 static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 {
   /* USER CODE BEGIN OnRxData_1 */
@@ -616,7 +473,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 
   if (params != NULL)
   {
-    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET); /* LED_BLUE */
+    //HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET); /* LED_BLUE */
 
     UTIL_TIMER_Start(&RxLedTimer);
 
@@ -662,12 +519,12 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
                 if (AppLedStateOn == RESET)
                 {
                   APP_LOG(TS_OFF, VLEVEL_H, "LED OFF\r\n");
-                  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
+                  //HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
                 }
                 else
                 {
                   APP_LOG(TS_OFF, VLEVEL_H, "LED ON\r\n");
-                  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET); /* LED_RED */
+                  //HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET); /* LED_RED */
                 }
               }
               break;
@@ -692,8 +549,9 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 static void SendTxData(void)
 {
   /* USER CODE BEGIN SendTxData_1 */
-  LmHandlerErrorStatus_t status = LORAMAC_HANDLER_ERROR;
+ LmHandlerErrorStatus_t status = LORAMAC_HANDLER_ERROR;
   uint8_t batteryLevel = GetBatteryLevel();
+  //sensor_t sensor_data;
   BME280_sensor_t sensor_data;
   UTIL_TIMER_Time_t nextTxIn = 0;
 
@@ -711,6 +569,7 @@ static void SendTxData(void)
     uint16_t altitudeGps = 0;
 #endif /* CAYENNE_LPP */
 
+    //EnvSensors_Read(&sensor_data);
     sensor_data = sensor_data_acquisition();
 
     APP_LOG(TS_ON, VLEVEL_M, "VDDA: %d\r\n", batteryLevel);
@@ -777,7 +636,7 @@ static void SendTxData(void)
     if ((JoinLedTimer.IsRunning) && (LmHandlerJoinStatus() == LORAMAC_HANDLER_SET))
     {
       UTIL_TIMER_Stop(&JoinLedTimer);
-      HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
+     //HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
     }
 
     status = LmHandlerSend(&AppData, LmHandlerParams.IsTxConfirmed, false);
@@ -810,7 +669,7 @@ static void OnTxTimerEvent(void *context)
   /* USER CODE BEGIN OnTxTimerEvent_1 */
 
   /* USER CODE END OnTxTimerEvent_1 */
-  osThreadFlagsSet(Thd_LoraSendProcessId, 1);
+  UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
 
   /*Wait for next tx slot*/
   UTIL_TIMER_Start(&TxTimer);
@@ -822,31 +681,30 @@ static void OnTxTimerEvent(void *context)
 /* USER CODE BEGIN PrFD_LedEvents */
 static void OnTxTimerLedEvent(void *context)
 {
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET); /* LED_GREEN */
+  //HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET); /* LED_GREEN */
 }
 
 static void OnRxTimerLedEvent(void *context)
 {
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET); /* LED_BLUE */
+ // HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET); /* LED_BLUE */
 }
 
 static void OnJoinTimerLedEvent(void *context)
 {
-  HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin); /* LED_RED */
+ // HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin); /* LED_RED */
 }
-
 /* USER CODE END PrFD_LedEvents */
 
 static void OnTxData(LmHandlerTxParams_t *params)
 {
   /* USER CODE BEGIN OnTxData_1 */
-  if ((params != NULL))
+   if ((params != NULL))
   {
     /* Process Tx event only if its a mcps response to prevent some internal events (mlme) */
     if (params->IsMcpsConfirm != 0)
     {
-      HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET); /* LED_GREEN */
-      UTIL_TIMER_Start(&TxLedTimer);
+      //HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET); /* LED_GREEN */
+      //UTIL_TIMER_Start(&TxLedTimer);
 
       APP_LOG(TS_OFF, VLEVEL_M, "\r\n###### ========== MCPS-Confirm =============\r\n");
       APP_LOG(TS_OFF, VLEVEL_H, "###### U/L FRAME:%04d | PORT:%d | DR:%d | PWR:%d", params->UplinkCounter,
@@ -869,12 +727,12 @@ static void OnTxData(LmHandlerTxParams_t *params)
 static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 {
   /* USER CODE BEGIN OnJoinRequest_1 */
-  if (joinParams != NULL)
+   if (joinParams != NULL)
   {
     if (joinParams->Status == LORAMAC_HANDLER_SUCCESS)
     {
-      UTIL_TIMER_Stop(&JoinLedTimer);
-      HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
+      //UTIL_TIMER_Stop(&JoinLedTimer);
+      //HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
 
       APP_LOG(TS_OFF, VLEVEL_M, "\r\n###### = JOINED = ");
       if (joinParams->Mode == ACTIVATION_TYPE_ABP)
@@ -899,7 +757,7 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 static void OnBeaconStatusChange(LmHandlerBeaconParams_t *params)
 {
   /* USER CODE BEGIN OnBeaconStatusChange_1 */
-  if (params != NULL)
+    if (params != NULL)
   {
     switch (params->State)
     {
@@ -950,7 +808,7 @@ static void OnMacProcessNotify(void)
   /* USER CODE BEGIN OnMacProcessNotify_1 */
 
   /* USER CODE END OnMacProcessNotify_1 */
-  osThreadFlagsSet(Thd_LmHandlerProcessId, 1);
+  UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LmHandlerProcess), CFG_SEQ_Prio_0);
 
   /* USER CODE BEGIN OnMacProcessNotify_2 */
 
@@ -1018,9 +876,7 @@ static void OnSystemReset(void)
 static void StopJoin(void)
 {
   /* USER CODE BEGIN StopJoin_1 */
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET); /* LED_BLUE */
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET); /* LED_GREEN */
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET); /* LED_RED */
+
   /* USER CODE END StopJoin_1 */
 
   UTIL_TIMER_Stop(&TxTimer);
@@ -1059,12 +915,10 @@ static void OnStopJoinTimerEvent(void *context)
   /* USER CODE END OnStopJoinTimerEvent_1 */
   if (ActivationType == LORAWAN_DEFAULT_ACTIVATION_TYPE)
   {
-    osThreadFlagsSet(Thd_LoraStopJoinId, 1);
+    UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaStopJoinEvent), CFG_SEQ_Prio_0);
   }
   /* USER CODE BEGIN OnStopJoinTimerEvent_Last */
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET); /* LED_BLUE */
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET); /* LED_GREEN */
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET); /* LED_RED */
+
   /* USER CODE END OnStopJoinTimerEvent_Last */
 }
 
